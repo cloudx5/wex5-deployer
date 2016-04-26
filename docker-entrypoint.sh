@@ -22,31 +22,28 @@ sleep 5
 cd $WEBAPPS_DIR
 rm -rf *
 
-# model, doc, sql
+# model, sql
+
+download_tar(){
+  # $1: url $2: filename
+  rm -rf $2.tar.gz
+  echo "正在更新 $2..."
+  curl -s -f $1/$2.tar.gz -o $2.tar.gz
+  ERROR=$?
+  if [ "$ERROR" -eq "0" ];then
+    tar -xf $2.tar.gz -C ./
+    echo "$2 更新完毕"
+  else
+    echo "[$ERROR]更新 $2 失败"
+    exit 1
+  fi
+}
+
 cd $JUSTEP_HOME
 rm -rf *
 
-echo "正在更新 model..."
-curl -s -f $DIST_URL/home/model.tar.gz -o $JUSTEP_HOME/model.tar.gz
-ERROR=$?
-if [ "$ERROR" -eq "0" ];then
-  tar -xf model.tar.gz -C ./
-  echo "model 更新完毕"
-else
-  echo "[$ERROR]更新 model 失败"
-  exit 1
-fi
-
-echo "正在更新 sql..."
-curl -s -f $DIST_URL/home/sql.tar.gz -f -o $JUSTEP_HOME/sql.tar.gz
-ERROR=$?
-if [ "$ERROR" -eq "0" ];then
-  tar -xf sql.tar.gz -C ./
-  echo "sql 更新完毕"
-else
-  echo "[$ERROR]更新 sql 失败"
-  exit 1
-fi
+download_tar $DIST_URL/home model
+download_tar $DIST_URL/home sql
 
 # init database
 if [ "$INIT_DB"x = "false"x ]; then
@@ -116,7 +113,7 @@ download_webapps(){
 cd $WEBAPPS_DIR
 
 echo "正在更新WeX5运行时..."
-download_webapps $WEX5_URL
+download_webapps $WEX5_URL/webapps
 echo "更新WeX5运行时完毕"
 
 echo "正在更新自定义webapps..."
