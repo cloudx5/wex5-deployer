@@ -27,7 +27,7 @@ cd $JUSTEP_HOME
 rm -rf *
 
 echo "正在更新 model..."
-curl -s $DIST_URL/home/model.tar.gz -o $JUSTEP_HOME/model.tar.gz
+curl -s -f $DIST_URL/home/model.tar.gz -o $JUSTEP_HOME/model.tar.gz
 ERROR=$?
 if [ "$ERROR" -eq "0" ];then
   tar -xf model.tar.gz -C ./
@@ -38,7 +38,7 @@ else
 fi
 
 echo "正在更新 sql..."
-curl -s $DIST_URL/home/sql.tar.gz -f -o $JUSTEP_HOME/sql.tar.gz
+curl -s -f $DIST_URL/home/sql.tar.gz -f -o $JUSTEP_HOME/sql.tar.gz
 ERROR=$?
 if [ "$ERROR" -eq "0" ];then
   tar -xf sql.tar.gz -C ./
@@ -85,7 +85,7 @@ else
   if [ "$file_list" ];then
     cd $SQL_PATH
     echo "获取mysql客户端..."
-    curl -s $PRODUCT_URL/mysql/5.6/mysql -o mysql
+    curl -s -f $PRODUCT_URL/mysql/5.6/mysql -o mysql
     chmod a+x mysql
     echo "开始数据库初始化..."
     load_script $SQL_PATH
@@ -96,7 +96,7 @@ fi
 
 download_webapps(){
   rm -rf $WEBAPPS_DIR/webapps.txt
-  curl -s $1/webapps.txt -o $WEBAPPS_DIR/webapps.txt
+  curl -s -f $1/webapps.txt -o $WEBAPPS_DIR/webapps.txt
   if [ "$?" -eq "0" ];then
     while read webapp
     do
