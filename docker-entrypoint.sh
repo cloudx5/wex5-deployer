@@ -12,30 +12,39 @@ fi
 
 PRODUCT_URL=http://jenkins.console:8080/dist/product
 WEX5_URL=$PRODUCT_URL/wex5/$X5_VERSION
+UPDATE_HOME_SH=home.sh
+UPDATE_WEBAPPS_SH=webapps.sh
 WEBAPPS_DIR=/usr/local/tomcat/webapps
 JUSTEP_HOME=/usr/local/x5
-
-# 暂停5秒，等待网络准备完成
-sleep 5
 
 # 清空weapps下应用，需部署的应用最后在放置
 cd $WEBAPPS_DIR
 rm -rf *
 
+# 暂停5秒，等待网络准备完成
+sleep 5
+
 # model, sql
 
 download_tar(){
-  # $1: url $2: filename
+  # $1: url $2: filename $3: 是否忽略不存在的资源 $4: 是否解压
   rm -rf $2.tar.gz
   echo "  正在更新 $2..."
   curl -s -f $1/$2.tar.gz -o $2.tar.gz
   ERROR=$?
   if [ "$ERROR" -eq "0" ]; then
-    tar -xf $2.tar.gz -C ./
+    if [ "$4"x = "true"x ]; then
+      mkdir -p $2
+      tar -xf $2.tar.gz -C ./$2
+    fi
     echo "  $2 更新完毕"
   else
-    echo "  [$ERROR]更新 $2 失败"
-    exit 1
+    if [ "$3"x = "true"x ]; then
+      echo "  $2 不存在，忽略更新"
+    else
+      echo "  [$ERROR]更新 $2 失败"
+      exit 1
+    fi
   fi
 }
 
@@ -45,15 +54,22 @@ rm -rf *
 echo "当前使用的WeX5版本：$X5_VERSION"
 
 echo "正在更新资源..."
-download_tar $DIST_URL/home model
-download_tar $DIST_URL/home sql
+curl -s -f $WEX5_URL/$UPDATE_HOME_SH -o $UPDATE_HOME_SH
+ERROR=$?
+if [ "$ERROR" -eq "0" ]; then
+  chmod a+x $UPDATE_HOME_SH
+  source $UPDATE_HOME_SH
+else
+  echo "  无更新规则，跳过更新"
+fi
 echo "更新资源完毕"
 
 # init database
 if [ "$INIT_DB"x = "false"x ]; then
-  echo "$INIT_DB=false，忽略数据库初始化"
+  echo '$INIT_DB=false，忽略数据库初始化'
 else
   SQL_PATH="$JUSTEP_HOME/sql"
+  mkdir -p $SQL_PATH
   LOG_PATH="$SQL_PATH/sqlload_`date +%Y%m%d%H%M%S`.log"
   load_script(){
     TMP="tmp_script"
@@ -117,16 +133,23 @@ download_webapps(){
 cd $WEBAPPS_DIR
 
 echo "正在更新WeX5运行时..."
+curl -s -f $WEX5_URL/$UPDATE_WEBAPPS_SH -o $UPDATE_WEBAPPS_SH
+ERROR=$?
+if [ "$ERROR" -eq "0" ]; then
+  chmod a+x $UPDATE_WEBAPPS_SH
+  source $UPDATE_WEBAPPS_SH
+else
+  if [ -n "$INDEX_URL" ]; then
+    echo "  设置入口地址INDEX_URL为：$INDEX_URL"
+    INDEX_FILE="$WEBAPPS_DIR/ROOT/index.html"
+    mkdir -p $WEBAPPS_DIR/ROOT
+    echo "<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">" > $INDEX_FILE
+    echo "<html><head><script type="text/javascript">window.location=\"$INDEX_URL\";</script></head></html>" >> $INDEX_FILE
+  fi
+  echo "  无更新规则，跳过更新"
+fi
 download_webapps $WEX5_URL/webapps
 echo "更新WeX5运行时完毕"
-
-if [ -n "$INDEX_URL" ]; then
-  echo "设置入口地址INDEX_URL为：$INDEX_URL"
-  INDEX_FILE="$WEBAPPS_DIR/ROOT/index.html"
-  mkdir -p $WEBAPPS_DIR/ROOT
-  echo "<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">" > $INDEX_FILE
-  echo "<html><head><script type="text/javascript">window.location=\"$INDEX_URL\";</script></head></html>" >> $INDEX_FILE
-fi
 
 echo "正在更新自定义webapps..."
 download_webapps $DIST_URL/webapps
