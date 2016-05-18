@@ -70,7 +70,7 @@ if [ "$INIT_DB"x = "false"x ]; then
 else
   SQL_PATH="$JUSTEP_HOME/sql"
   mkdir -p $SQL_PATH
-  LOG_PATH="$SQL_PATH/sqlload_`date +%Y%m%d%H%M%S`.log"
+  LOG_PATH="$SQL_PATH/sql_`date +%Y%m%d%H%M%S`.log"
   load_script(){
     TMP="tmp_script"
     echo "DROP DATABASE IF EXISTS x5;" >>$TMP
@@ -87,25 +87,41 @@ else
     echo "quit" >>$TMP
     echo "" >>$TMP
 
+    testsql=( ./mysql -hdatabase -uroot -px5 )
+    for i in {3..0}; do
+      if echo 'SELECT 1' | ${testsql[@]} &> /dev/null; then
+        break
+      fi
+      echo '  连接数据库失败，10秒后重试...'
+      sleep 10 
+    done
+
+    if [ "$i" = 0 ]; then
+      echo >&2 '  数据库连接失败，请检查部署环境'
+      exit 1
+    fi
+
     START_TIME=$(date "+%s")
     ./mysql --default-character-set=utf8 -hdatabase -uroot -px5 -ve "source $TMP" >$LOG_PATH 2>&1
     ERROR=$?
     if [ "$ERROR" -eq "0" ]; then
-      echo "数据库初始化成功！共计用时: " `expr $(date "+%s") - ${START_TIME}` " 秒"
+      echo "  数据库初始化成功！共计用时: " `expr $(date "+%s") - ${START_TIME}` " 秒"
     else
-      echo "[$ERROR]数据库初始化失败"
+      echo "  [$ERROR]数据库初始化失败"
+      head $LOG_PATH
       exit 1
     fi
   }
 
   file_list=`ls -A $SQL_PATH`
   if [ "$file_list" ]; then
+    echo "开始数据库初始化..."
     cd $SQL_PATH
-    echo "获取mysql客户端..."
+    echo "  获取mysql客户端..."
     curl -s -f $PRODUCT_URL/mysql/5.6/mysql -o mysql
     chmod a+x mysql
-    echo "开始数据库初始化..."
     load_script $SQL_PATH
+    echo "数据库初始化完毕"
   fi
 fi
 
@@ -114,7 +130,9 @@ fi
 download_webapps(){
   rm -rf $WEBAPPS_DIR/webapps.txt
   curl -s -f $1/webapps.txt -o $WEBAPPS_DIR/webapps.txt
-  if [ "$?" -eq "0" ]; then
+  ERROR=$?
+  # curl 空文件不会生成，这里判断一下文件是否存在
+  if [ "$ERROR" -eq "0" ] && [ -s $WEBAPPS_DIR/webapps.txt ]; then
     while read webapp
     do
       echo "  正在更新 $webapp..."
