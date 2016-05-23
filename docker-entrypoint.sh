@@ -1,13 +1,17 @@
 #!/bin/bash
 
+error(){
+  echo >&2 "$1"
+  echo >&2 "****ERROR****: $2"
+  exit $2
+}
+
 if [ -z "$X5_VERSION" ]; then
-  echo >&2 '请设置$X5_VERSION 环境变量，该变量标识使用的WeX5版本，例如3.5 '
-  exit 1
+  error '请设置$X5_VERSION 环境变量，该变量标识使用的WeX5版本，例如3.5 ' 1
 fi
 
 if [ -z "$DIST_URL" ]; then
-  echo >&2 '请设置$DIST_URL环境变量 '
-  exit 1
+  error '请设置$DIST_URL环境变量 ' 1
 fi
 
 PRODUCT_URL=http://jenkins.console:8080/dist/product
@@ -42,8 +46,7 @@ download_tar(){
     if [ "$3"x = "true"x ]; then
       echo "  $2 不存在，忽略更新"
     else
-      echo "  [$ERROR]更新 $2 失败"
-      exit 1
+      error "  [$ERROR]更新 $2 失败" 1
     fi
   fi
 }
@@ -97,8 +100,7 @@ else
     done
 
     if [ "$i" = 0 ]; then
-      echo >&2 '  数据库连接失败，请检查部署环境'
-      exit 1
+      error '  数据库连接失败，请检查部署环境' 1
     fi
 
     START_TIME=$(date "+%s")
@@ -107,9 +109,8 @@ else
     if [ "$ERROR" -eq "0" ]; then
       echo "  数据库初始化成功！共计用时: " `expr $(date "+%s") - ${START_TIME}` " 秒"
     else
-      echo "  [$ERROR]数据库初始化失败"
       head $LOG_PATH
-      exit 1
+      error "  [$ERROR]数据库初始化失败" 1
     fi
   }
 
@@ -141,8 +142,7 @@ download_webapps(){
       if [ "$ERROR" -eq "0" ]; then
         echo "  $webapp 更新完毕"
       else
-        echo "  [$ERROR]更新 $webapp 失败"
-        exit 1
+        error "  [$ERROR]更新 $webapp 失败" 1
       fi
     done < $WEBAPPS_DIR/webapps.txt
   fi
