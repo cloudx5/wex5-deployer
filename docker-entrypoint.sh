@@ -173,3 +173,5 @@ echo "正在更新自定义webapps..."
 download_webapps $DIST_URL/webapps
 echo "自定义webapps更新完毕"
 
+echo "****FINISHED****"
+
