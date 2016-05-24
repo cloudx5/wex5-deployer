@@ -25,8 +25,19 @@ JUSTEP_HOME=/usr/local/x5
 cd $WEBAPPS_DIR
 rm -rf *
 
-# 暂停5秒，等待网络准备完成
-sleep 5
+# 检测product下载的服务是否可访问
+for i in {3..0}; do
+  ret_code=`curl -I -s --connect-timeout 5 $PRODUCT_URL/status -w %{http_code} | tail -n1`
+  if [ "x$ret_code" = "x200" ]; then
+    break
+  fi
+  echo '连接产品服务器失败，10秒后重试...'
+  sleep 10 
+done
+
+if [ "$i" = 0 ]; then
+  error '连接产品服务器失败，请联系管理员' 1
+fi
 
 # model, sql
 
@@ -159,7 +170,7 @@ if [ "$ERROR" -eq "0" ]; then
 else
   if [ -n "$INDEX_URL" ]; then
     echo "  设置入口地址INDEX_URL为：$INDEX_URL"
-    INDEX_FILE="$WEBAPPS_DIR/ROOT/index.html"
+    INDEX_FILE="$WEBAPPS_DIR/ROOT/index.jsp"
     mkdir -p $WEBAPPS_DIR/ROOT
     echo "<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">" > $INDEX_FILE
     echo "<html><head><script type="text/javascript">window.location=\"$INDEX_URL\";</script></head></html>" >> $INDEX_FILE
