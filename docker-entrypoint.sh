@@ -92,9 +92,12 @@ else
     echo "USE x5;" >>$TMP
     echo "SET FOREIGN_KEY_CHECKS=0;" >>$TMP
     echo "SET SQL_MODE='NO_AUTO_VALUE_ON_ZERO';" >>$TMP
-    for FILE_NAME in `ls -A $1/*.sql`;do
-      echo "source $FILE_NAME;" >>$TMP
-    done
+    SQL_FILES=`ls -A $1/*.sql`
+    if [ "$SQL_FILES" ]; then
+      for FILE_NAME in $SQL_FILES;do
+        echo "source $FILE_NAME;" >>$TMP
+      done
+    fi
     echo "SET FOREIGN_KEY_CHECKS=1;" >>$TMP
     echo "SET SQL_MODE='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION';" >>$TMP
     echo "commit;" >>$TMP
@@ -125,16 +128,14 @@ else
     fi
   }
 
-  file_list=`ls -A $SQL_PATH`
-  if [ "$file_list" ]; then
-    echo "开始数据库初始化..."
-    cd $SQL_PATH
-    echo "  获取mysql客户端..."
-    curl -s -f $PRODUCT_URL/mysql/5.6/mysql -o mysql
-    chmod a+x mysql
-    load_script $SQL_PATH
-    echo "数据库初始化完毕"
-  fi
+  echo "开始数据库初始化..."
+  mkdir -p $SQL_PATH
+  cd $SQL_PATH
+  echo "  获取mysql客户端..."
+  curl -s -f $PRODUCT_URL/mysql/5.6/mysql -o mysql
+  chmod a+x mysql
+  load_script $SQL_PATH
+  echo "数据库初始化完毕"
 fi
 
 # webapps最后在更新，避免相关资源未准备而访问错误
