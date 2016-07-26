@@ -42,8 +42,11 @@ fi
 # model, sql
 
 download_tar(){
-  # $1: url $2: filename $3: 是否忽略不存在的资源 $4: 是否解压
+  # $1: url $2: filename $3: 是否忽略不存在的资源 $4: 是否解压 $5: 不删除解压目录，默认删除
   rm -rf $2.tar.gz
+  if [ "$5"x != "true"x ]; then
+    rm -rf $2
+  fi
   echo "  正在更新 $2..."
   curl -s -f $1/$2.tar.gz -o $2.tar.gz
   ERROR=$?
@@ -63,7 +66,6 @@ download_tar(){
 }
 
 cd $JUSTEP_HOME
-rm -rf *
 
 echo "当前使用的WeX5版本：$X5_VERSION"
 
