@@ -14,6 +14,10 @@ if [ -z "$DIST_URL" ]; then
   error '请设置$DIST_URL环境变量 ' 1
 fi
 
+if [ -z "$POOL_TYPE" ]; then
+  error '请设置$POOL_TYPE环境变量 ' 1
+fi
+
 PRODUCT_URL=http://jenkins.system:8080/dist/product
 WEX5_URL=$PRODUCT_URL/wex5/$X5_VERSION
 UPDATE_HOME_SH=home.sh
@@ -186,3 +190,5 @@ else
 fi
 
 echo "****FINISHED****"
+
+java -jar /usr/local/agent/agent-1.0.1.jar $POOL_TYPE
