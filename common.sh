@@ -3,9 +3,12 @@
 PRODUCT_URL=http://jenkins.system:8080/dist/product
 WEX5_URL=$PRODUCT_URL/wex5/$X5_VERSION
 UPDATE_HOME_SH=home.sh
+UPDATE_HOME_USER_SH=home-user.sh
 UPDATE_WEBAPPS_SH=webapps.sh
+UPDATE_WEBAPPS_USER_SH=webapps-user.sh
 WEBAPPS_DIR=/usr/local/tomcat/webapps
 JUSTEP_HOME=/usr/local/x5
+WWW_DIR=/var/www/html
 
 error(){
   echo >&2 "$1"
