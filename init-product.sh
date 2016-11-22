@@ -31,7 +31,7 @@ cd $JUSTEP_HOME
 echo "当前使用的WeX5版本：$X5_VERSION"
 
 echo "正在更新资源..."
-curl -s -f $WEX5_URL/$UPDATE_HOME_SH -o $UPDATE_HOME_SH
+curl -s -f $X5_URL/$UPDATE_HOME_SH -o $UPDATE_HOME_SH
 ERROR=$?
 if [ "$ERROR" -eq "0" ]; then
   chmod a+x $UPDATE_HOME_SH
@@ -46,7 +46,7 @@ echo "更新资源完毕"
 cd $WEBAPPS_DIR
 
 echo "正在更新WeX5运行时..."
-curl -s -f $WEX5_URL/$UPDATE_WEBAPPS_SH -o $UPDATE_WEBAPPS_SH
+curl -s -f $X5_URL/$UPDATE_WEBAPPS_SH -o $UPDATE_WEBAPPS_SH
 ERROR=$?
 if [ "$ERROR" -eq "0" ]; then
   chmod a+x $UPDATE_WEBAPPS_SH
@@ -61,5 +61,5 @@ else
   fi
   echo "  无更新规则，跳过更新"
 fi
-download_webapps $WEX5_URL/webapps
+download_webapps $X5_URL/webapps
 echo "更新WeX5运行时完毕"
