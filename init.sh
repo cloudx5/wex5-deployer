@@ -1,14 +1,55 @@
 #!/bin/bash
 
 source `dirname $0`/common.sh
-
+echo "用户资源ID: $1"
 export DIST_URL=$DIST_URL/$1
 
-echo "用户资源ID: $1"
+PROJECT_CONF_PATH=`dirname $0`/project.conf
+
+curl -s -f $DIST_URL/home/project.conf -o $PROJECT_CONF_PATH
+
+while read line
+do
+  #echo $line
+  if [ -z "$line" ]; then
+   continue
+  fi
+  kv=(${line//=/ })
+  #echo $kv
+  case ${kv[0]} in
+    "api_key")
+      API_KEY=${kv[1]}
+      echo "$API_KEY"
+      ;;
+    "api_secret")
+      API_SECRET=${kv[1]}
+      #echo "$API_SECRET"
+      ;;
+    [a-z]*_srvinit)
+      #SRV_INIT_ARR=(${SRV_INIT_ARR[@]} $kv)
+      #echo $kv
+      SRV_INIT_ARR="$SRV_INIT_ARR,$line"
+      ;;
+    *)
+      #echo "ignore: ${kv}"
+      ;;
+  esac
+done < $PROJECT_CONF_PATH
+
+
 
 if [ -z "$DIST_URL" ]; then
   error '请设置$DIST_URL环境变量 ' 1
 fi
+
+echo "正在初始化网关..."
+source `dirname $0`/init-gateway.sh
+echo "初始化网关完毕."
+
+echo "正在初始化公共服务..."
+source `dirname $0`/init-service.sh
+echo "初始化公共服务完毕."
+
 
 cd $JUSTEP_HOME
 

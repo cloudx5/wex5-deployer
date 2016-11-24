@@ -3,7 +3,7 @@
 source `dirname $0`/init-product.sh
 
 if [ -z "$POOL_TYPE" ]; then
-  source `dirname $0`/init.sh
+  source `dirname $0`/init.sh $RESOUCE_ID
   echo "****FINISHED****"
   echo "始化完毕，结束进程"
 else

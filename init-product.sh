@@ -9,6 +9,7 @@ fi
 # 清空weapps下应用，需部署的应用最后在放置
 cd $WEBAPPS_DIR
 rm -rf *
+mkdir ROOT
 
 # 检测product下载的服务是否可访问
 for i in {3..0}; do
