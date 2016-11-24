@@ -11,6 +11,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY docker-entrypoint.sh /usr/local/bin/
 COPY common.sh /usr/local/bin/
 COPY init-product.sh /usr/local/bin/
+COPY init-service.sh /usr/local/bin/
+COPY init-gateway.sh /usr/local/bin/
 COPY init.sh /usr/local/bin/
 COPY clean.sh /usr/local/bin/
 COPY agent-1.0.1.jar /usr/local/agent/
