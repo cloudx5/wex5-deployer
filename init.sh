@@ -25,6 +25,10 @@ do
       API_SECRET=${kv[1]}
       #echo "$API_SECRET"
       ;;
+    "index_url")
+      INDEX_URL=${kv[1]}
+      #echo "$API_SECRET"
+      ;;
     [a-z]*_srvinit)
       #SRV_INIT_ARR=(${SRV_INIT_ARR[@]} $kv)
       #echo $kv
