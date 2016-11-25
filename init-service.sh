@@ -21,7 +21,8 @@ for srv in $srvinit;do
       value=${kv[1]}
       sn=(${key//_/ }) 
       #echo "http://gateway/${sn[0]}$value"
-      echo "初始化公共服务： ${sn[0]}..."
+      echo "初始化公共服务( $BASE_DOMAIN )： ${sn[0]}..."
+      echo "$BASE_DOMAIN"
       curl -sS -w "%{http_code}\n" -H "Host: $BASE_DOMAIN" -X POST --url http://gateway/${sn[0]}$value -H "apiKey: $API_KEY" -H "apiSecret: $API_SECRET"
       echo "初始化公共服务： ${sn[0]}结束."
       ;;
