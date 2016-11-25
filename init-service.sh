@@ -1,6 +1,12 @@
 #!/bin/bash
 #init service for tenant
 #source common.sh
+
+if [ -z "$BASE_DOMAIN" ]; then
+  BASE_DOMAIN="xpaas.net"
+  echo "BASE_DOMAIN环境变量未设置， 使用默认值: $BASE_DOMAIN"
+fi
+
 srvinit=${SRV_INIT_ARR//,/ }
 #echo $srvinit
 for srv in $srvinit;do
@@ -16,7 +22,7 @@ for srv in $srvinit;do
       sn=(${key//_/ }) 
       #echo "http://gateway/${sn[0]}$value"
       echo "初始化公共服务： ${sn[0]}..."
-      curl -sS -w "%{http_code}\n" -X POST --url http://gateway/${sn[0]}$value -H "apiKey: $API_KEY" -H "apiSecret: $API_SECRET"
+      curl -sS -w "%{http_code}\n" -H "Host: $API_KEY.$BASE_DOMAIN" -X POST --url http://gateway/${sn[0]}$value -H "apiKey: $API_KEY" -H "apiSecret: $API_SECRET"
       echo "初始化公共服务： ${sn[0]}结束."
       ;;
     *)
