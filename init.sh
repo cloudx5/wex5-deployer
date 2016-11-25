@@ -72,7 +72,7 @@ echo "更新用户资源完毕"
 
 cd $WEBAPPS_DIR
 
-echo "正在更新WeX5运行时..."
+echo "正在更新$X5_NAME运行时..."
 curl -s -f $X5_URL/$UPDATE_WEBAPPS_USER_SH -o $UPDATE_WEBAPPS_USER_SH
 ERROR=$?
 if [ "$ERROR" -eq "0" ]; then
@@ -88,7 +88,7 @@ else
   fi
   echo "  无更新规则，跳过更新"
 fi
-echo "更新WeX5运行时完毕"
+echo "更新$X5_NAME运行时完毕"
 
 echo "正在更新自定义webapps..."
 download_webapps $DIST_URL/webapps

@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	&& rm -rf /var/lib/apt/lists/*
 
 COPY docker-entrypoint.sh /usr/local/bin/
+COPY env.sh /usr/local/bin/
 COPY common.sh /usr/local/bin/
 COPY init-product.sh /usr/local/bin/
 COPY init-service.sh /usr/local/bin/

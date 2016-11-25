@@ -3,7 +3,7 @@
 source `dirname $0`/common.sh
 
 if [ -z "$X5_VERSION" ]; then
-  error '请设置$X5_VERSION 环境变量，该变量标识使用的WeX5版本，例如3.5 ' 1
+  error '请设置$X5_VERSION 环境变量，该变量标识使用的X5版本，例如3.5 ' 1
 fi
 
 # 清空weapps下应用，需部署的应用最后在放置
@@ -29,7 +29,7 @@ fi
 
 cd $JUSTEP_HOME
 
-echo "当前使用的WeX5版本：$X5_VERSION"
+echo "当前使用的$X5_NAME版本：$X5_VERSION"
 
 echo "正在更新资源..."
 curl -s -f $X5_URL/$UPDATE_HOME_SH -o $UPDATE_HOME_SH
@@ -46,7 +46,7 @@ echo "更新资源完毕"
 
 cd $WEBAPPS_DIR
 
-echo "正在更新WeX5运行时..."
+echo "正在更新$X5_NAME运行时..."
 curl -s -f $X5_URL/$UPDATE_WEBAPPS_SH -o $UPDATE_WEBAPPS_SH
 ERROR=$?
 if [ "$ERROR" -eq "0" ]; then
@@ -63,4 +63,4 @@ else
   echo "  无更新规则，跳过更新"
 fi
 download_webapps $X5_URL/webapps
-echo "更新WeX5运行时完毕"
+echo "更新$X5_NAME运行时完毕"
