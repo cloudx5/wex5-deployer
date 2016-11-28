@@ -53,12 +53,12 @@ echo "环境参数获取耗时$[ prepare - start ]毫秒"
 echo "正在初始化网关..."
 source `dirname $0`/init-gateway.sh
 gateway=`expr \`date +%s%N\` / 1000000`
-echo "初始化网关完毕.耗时$[ gateway - prepare ]毫秒"
+echo "初始化网关完毕. 总耗时$[ gateway - prepare ]毫秒"
 
 echo "正在初始化公共服务..."
 source `dirname $0`/init-service.sh
 cmnsrv=`expr \`date +%s%N\` / 1000000`
-echo "初始化公共服务完毕. 耗时$[ cmnsrv - gateway ]毫秒."
+echo "初始化公共服务完毕. 总耗时$[ cmnsrv - gateway ]毫秒."
 
 cd $JUSTEP_HOME
 
