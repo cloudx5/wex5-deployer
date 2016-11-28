@@ -22,9 +22,11 @@ for srv in $srvinit;do
       sn=(${key//_/ }) 
       #echo "http://gateway/${sn[0]}$value"
       echo "初始化公共服务( $BASE_DOMAIN )： ${sn[0]}..."
-      echo "$BASE_DOMAIN"
+      #echo "$BASE_DOMAIN"
+      start=`expr \`date +%s%N\` / 1000000`
       curl -sS -w "%{http_code}\n" -H "Host: $BASE_DOMAIN" -X POST --url http://gateway/${sn[0]}$value -H "apiKey: $API_KEY" -H "apiSecret: $API_SECRET"
-      echo "初始化公共服务： ${sn[0]}结束."
+      end=`expr \`date +%s%N\` / 1000000`
+      echo "初始化公共服务： ${sn[0]}结束. 耗时$[ end - start ]毫秒."
       ;;
     *)
       echo "ignore: ${kv[0]}"
