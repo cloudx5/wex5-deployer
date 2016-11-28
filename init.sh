@@ -1,5 +1,5 @@
 #!/bin/bash
-start=`date +%s`
+start=`expr \`date +%s%N\` / 1000000`
 
 source `dirname $0`/common.sh
 echo "用户资源ID: $1"
@@ -47,22 +47,22 @@ if [ -z "$DIST_URL" ]; then
   error '请设置$DIST_URL环境变量 ' 1
 fi
 
-prepare=`date +%s`
-echo "耗时$[ prepare - start ]秒"
+prepare=`expr \`date +%s%N\` / 1000000`
+echo "耗时$[ prepare - start ]毫秒"
 
 echo "正在初始化网关..."
 source `dirname $0`/init-gateway.sh
 echo "初始化网关完毕."
 
-gateway=`date +%s`
-echo "耗时$[ gateway - prepare ]秒"
+gateway=`expr \`date +%s%N\` / 1000000`
+echo "耗时$[ gateway - prepare ]毫秒"
 
 echo "正在初始化公共服务..."
 source `dirname $0`/init-service.sh
 echo "初始化公共服务完毕."
 
-cmnsrv=`date +%s`
-echo "耗时$[ cmnsrv - gateway ]秒"
+cmnsrv=`expr \`date +%s%N\` / 1000000`
+echo "耗时$[ cmnsrv - gateway ]毫秒"
 
 
 cd $JUSTEP_HOME
@@ -78,8 +78,8 @@ else
 fi
 echo "更新用户资源完毕"
 
-usrsrc=`date +%s`
-echo "耗时$[ usrsrc - cmnsrv ]秒"
+usrsrc=`expr \`date +%s%N\` / 1000000`
+echo "耗时$[ usrsrc - cmnsrv ]毫秒"
 
 # webapps资源更新后再更新，避免相关资源未准备而访问错误
 
@@ -107,8 +107,8 @@ echo "正在更新自定义webapps..."
 download_webapps $DIST_URL/webapps
 echo "自定义webapps更新完毕"
 
-webapps=`date +%s`
-echo "耗时$[ webapps - usrsrc ]秒"
+webapps=`expr \`date +%s%N\` / 1000000`
+echo "耗时$[ webapps - usrsrc ]毫秒"
 
 # 数据库初始化，由于数据库容器启动慢，放到最后执行
 if [ "$INIT_DB"x = "false"x ]; then
@@ -168,5 +168,5 @@ else
   echo "数据库初始化完毕"
 fi
 
-dbinit=`date +%s`
-echo "耗时$[ dbinit - webapps ]秒"
+dbinit=`expr \`date +%s%N\` / 1000000`
+echo "耗时$[ dbinit - webapps ]毫秒"
