@@ -162,4 +162,4 @@ else
 fi
 
 end=`expr \`date +%s%N\` / 1000000`
-echo "总耗时: $[ end - start ]毫秒."
+echo "初始化总耗时: $[ end - start ]毫秒."
