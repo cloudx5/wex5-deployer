@@ -160,3 +160,6 @@ else
   dbinit=`expr \`date +%s%N\` / 1000000`
   echo "数据库初始化完毕. 耗时$[ dbinit - webapps ]毫秒"
 fi
+
+end=`expr \`date +%s%N\` / 1000000`
+echo "总耗时: $[ end - start ]毫秒."
