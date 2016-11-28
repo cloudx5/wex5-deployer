@@ -48,22 +48,17 @@ if [ -z "$DIST_URL" ]; then
 fi
 
 prepare=`expr \`date +%s%N\` / 1000000`
-echo "耗时$[ prepare - start ]毫秒"
+echo "环境参数获取耗时$[ prepare - start ]毫秒"
 
 echo "正在初始化网关..."
 source `dirname $0`/init-gateway.sh
-echo "初始化网关完毕."
-
 gateway=`expr \`date +%s%N\` / 1000000`
-echo "耗时$[ gateway - prepare ]毫秒"
+echo "初始化网关完毕.耗时$[ gateway - prepare ]毫秒"
 
 echo "正在初始化公共服务..."
 source `dirname $0`/init-service.sh
-echo "初始化公共服务完毕."
-
 cmnsrv=`expr \`date +%s%N\` / 1000000`
-echo "耗时$[ cmnsrv - gateway ]毫秒"
-
+echo "初始化公共服务完毕. 耗时$[ cmnsrv - gateway ]毫秒."
 
 cd $JUSTEP_HOME
 
@@ -76,10 +71,8 @@ if [ "$ERROR" -eq "0" ]; then
 else
   echo "  无更新规则，跳过更新"
 fi
-echo "更新用户资源完毕"
-
 usrsrc=`expr \`date +%s%N\` / 1000000`
-echo "耗时$[ usrsrc - cmnsrv ]毫秒"
+echo "更新用户资源完毕. 耗时$[ usrsrc - cmnsrv ]毫秒."
 
 # webapps资源更新后再更新，避免相关资源未准备而访问错误
 
@@ -105,10 +98,8 @@ echo "更新$X5_NAME运行时完毕"
 
 echo "正在更新自定义webapps..."
 download_webapps $DIST_URL/webapps
-echo "自定义webapps更新完毕"
-
 webapps=`expr \`date +%s%N\` / 1000000`
-echo "耗时$[ webapps - usrsrc ]毫秒"
+echo "自定义webapps更新完毕. 耗时$[ webapps - usrsrc ]毫秒."
 
 # 数据库初始化，由于数据库容器启动慢，放到最后执行
 if [ "$INIT_DB"x = "false"x ]; then
@@ -147,11 +138,12 @@ else
       error '  数据库连接失败，请检查部署环境' 1
     fi
 
-    START_TIME=$(date "+%s")
+    #START_TIME=$(date "+%s")
     ./mysql --default-character-set=utf8 -hdatabase -uroot -px5 -ve "source $TMP" >$LOG_PATH 2>&1
     ERROR=$?
     if [ "$ERROR" -eq "0" ]; then
-      echo "  数据库初始化成功！共计用时: " `expr $(date "+%s") - ${START_TIME}` " 秒"
+      #echo "  数据库初始化成功！共计用时: " `expr $(date "+%s") - ${START_TIME}` " 秒"
+      echo "  数据库初始化成功！"
     else
       head $LOG_PATH
       error "  [$ERROR]数据库初始化失败" 1
@@ -165,8 +157,6 @@ else
   curl -s -f $PRODUCT_URL/mysql/5.6/mysql -o mysql
   chmod a+x mysql
   load_script $SQL_PATH
-  echo "数据库初始化完毕"
+  dbinit=`expr \`date +%s%N\` / 1000000`
+  echo "数据库初始化完毕. 耗时$[ dbinit - webapps ]毫秒"
 fi
-
-dbinit=`expr \`date +%s%N\` / 1000000`
-echo "耗时$[ dbinit - webapps ]毫秒"
