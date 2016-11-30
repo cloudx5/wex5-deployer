@@ -1,0 +1,15 @@
+{
+	testTimes:2
+	/*
+	,driverClassName:"org.postgresql.Driver",
+	username:"test",
+	password:"123456",
+	url:"jdbc:postgresql://localhost:5432/test",
+	schema:""
+	driverClassName:"com.mysql.jdbc.Driver"
+	username:"root",
+	password:"x5",
+	url:"jdbc:mysql://localhost:3306/x5demo",
+	schema:""
+	*/
+}

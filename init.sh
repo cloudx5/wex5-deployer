@@ -19,15 +19,35 @@ do
   #echo $kv
   case ${kv[0]} in
     "api_key")
-      API_KEY=${kv[1]}
+      API_KEY=${line#*=}
       echo "$API_KEY"
       ;;
     "api_secret")
-      API_SECRET=${kv[1]}
+      API_SECRET=${line#*=}
       #echo "$API_SECRET"
       ;;
     "index_url")
-      INDEX_URL=${kv[1]}
+      INDEX_URL=${line#*=}
+      #echo "$API_SECRET"
+      ;;
+    "db_username")
+      DB_USERNAME=${line#*=}
+      #echo "$API_SECRET"
+      ;;
+    "db_password")
+      DB_PASSWORD=${line#*=}
+      #echo "$API_SECRET"
+      ;;
+    "db_driver_class")
+      DB_DRIVER_CLASS_NAME=${line#*=}
+      #echo "$API_SECRET"
+      ;;
+    "db_url")
+      DB_URL=${line#*=}
+      #echo "$API_SECRET"
+      ;;
+    "db_schema")
+      DB_SCHEMA=${line#*=}
       #echo "$API_SECRET"
       ;;
     [a-z]*_srvinit)
@@ -102,64 +122,14 @@ webapps=`expr \`date +%s%N\` / 1000000`
 echo "自定义webapps更新完毕. 耗时$[ webapps - usrsrc ]毫秒."
 
 # 数据库初始化，由于数据库容器启动慢，放到最后执行
+echo "正在初始化数据库..."
 if [ "$INIT_DB"x = "false"x ]; then
   echo '$INIT_DB=false，忽略数据库初始化'
 else
-  SQL_PATH="$JUSTEP_HOME/sql"
-  mkdir -p $SQL_PATH
-  LOG_PATH="$SQL_PATH/sql_`date +%Y%m%d%H%M%S`.log"
-  load_script(){
-    TMP="tmp_script"
-    echo "DROP DATABASE IF EXISTS x5;" >>$TMP
-    echo "CREATE DATABASE x5;" >>$TMP
-    echo "USE x5;" >>$TMP
-    echo "SET FOREIGN_KEY_CHECKS=0;" >>$TMP
-    echo "SET SQL_MODE='NO_AUTO_VALUE_ON_ZERO';" >>$TMP
-    SQL_FILES=`ls -A $1/*.sql 2> /dev/null`
-    for FILE_NAME in $SQL_FILES;do
-      echo "source $FILE_NAME;" >>$TMP
-    done
-    echo "SET FOREIGN_KEY_CHECKS=1;" >>$TMP
-    echo "SET SQL_MODE='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION';" >>$TMP
-    echo "commit;" >>$TMP
-    echo "quit" >>$TMP
-    echo "" >>$TMP
-
-    testsql=( ./mysql -hdatabase -uroot -px5 )
-    for i in {9..0}; do
-      if echo 'SELECT 1' | ${testsql[@]} &> /dev/null; then
-        break
-      fi
-      echo '  连接数据库失败，5秒后重试...'
-      sleep 5 
-    done
-
-    if [ "$i" = 0 ]; then
-      error '  数据库连接失败，请检查部署环境' 1
-    fi
-
-    #START_TIME=$(date "+%s")
-    ./mysql --default-character-set=utf8 -hdatabase -uroot -px5 -ve "source $TMP" >$LOG_PATH 2>&1
-    ERROR=$?
-    if [ "$ERROR" -eq "0" ]; then
-      #echo "  数据库初始化成功！共计用时: " `expr $(date "+%s") - ${START_TIME}` " 秒"
-      echo "  数据库初始化成功！"
-    else
-      head $LOG_PATH
-      error "  [$ERROR]数据库初始化失败" 1
-    fi
-  }
-
-  echo "开始数据库初始化..."
-  mkdir -p $SQL_PATH
-  cd $SQL_PATH
-  echo "  获取mysql客户端..."
-  curl -s -f $PRODUCT_URL/mysql/5.6/mysql -o mysql
-  chmod a+x mysql
-  load_script $SQL_PATH
-  dbinit=`expr \`date +%s%N\` / 1000000`
-  echo "数据库初始化完毕. 耗时$[ dbinit - webapps ]毫秒"
+  source `dirname $0`/init-db.sh  
 fi
+dbinit=`expr \`date +%s%N\` / 1000000`
+echo "数据库初始化完毕. 耗时$[ dbinit - webapps ]毫秒."
 
 end=`expr \`date +%s%N\` / 1000000`
 echo "初始化总耗时: $[ end - start ]毫秒."
