@@ -1,4 +1,4 @@
-FROM java:8-jre
+FROM hub.cloudx5.com/java:8-jre
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		zip \
