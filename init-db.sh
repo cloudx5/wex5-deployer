@@ -116,7 +116,8 @@ content=`cat $xmlpath`
 content=${content//##DB_DRIVER_CLASS_NAME##/$DB_DRIVER_CLASS_NAME}
 content=${content//##DB_USERNAME##/$DB_USERNAME}
 content=${content//##DB_PASSWORD##/$DB_PASSWORD}
-content=${content//##DB_URL##/$DB_URL}
+DB_URL_ESCAPE=${DB_URL//&/&amp;}
+content=${content//##DB_URL##/$DB_URL_ESCAPE}
 content=${content//##DB_SCHEMA##/$DB_SCHEMA}
 #echo $content
 echo $content > $JUSTEP_HOME/conf/datasource.xml
