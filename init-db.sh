@@ -38,10 +38,10 @@ load_script(){
   ERROR=$?
   if [ "$ERROR" -eq "0" ]; then
     #echo "  数据库初始化成功！共计用时: " `expr $(date "+%s") - ${START_TIME}` " 秒"
-    echo "  数据库初始化成功！"
+    echo "  SQL初始化成功！"
   else
     head $LOG_PATH
-    error "  [$ERROR]数据库初始化失败" 1
+    error "  [$ERROR]SQL初始化失败" 1
   fi
 }
 
@@ -63,37 +63,37 @@ dbjars=`expr \`date +%s%N\` / 1000000`
 if [ -z "$DB_DRIVER_CLASS_NAME" ]; then
   error '请设置DB_DRIVER_CLASS_NAME环境变量' 1
 else
-  echo "DB_DRIVER_CLASS_NAME: $DB_DRIVER_CLASS_NAME"
+  #echo "DB_DRIVER_CLASS_NAME: $DB_DRIVER_CLASS_NAME"
   export DB_DRIVER_CLASS_NAME
 fi
 if [ -z "$DB_USERNAME" ]; then
   error '请设置DB_USERNAME环境变量' 1
 else
-  echo "DB_USERNAME: $DB_USERNAME"
+  #echo "DB_USERNAME: $DB_USERNAME"
   export DB_USERNAME
 fi
 if [ -z "$DB_PASSWORD" ]; then
   error '请设置DB_PASSWORD环境变量' 1
 else
-  echo "DB_PASSWORD: $DB_PASSWORD"
+  #echo "DB_PASSWORD: $DB_PASSWORD"
   export DB_PASSWORD
 fi
 if [ -z "$DB_URL" ]; then
   error '请设置DB_URL环境变量' 1
 else
-  echo "DB_URL: $DB_URL"
+  #echo "DB_URL: $DB_URL"
   export DB_URL
 fi
 if [ -z "$DB_SCHEMA" ]; then
   error '请设置DB_SCHEMA环境变量' 1
 else
-  echo "DB_SCHEMA: $DB_SCHEMA"
+  #echo "DB_SCHEMA: $DB_SCHEMA"
   export DB_SCHEMA
 fi
 if [ -z "$JUSTEP_HOME" ]; then
   error '请设置JUSTEP_HOME环境变量' 1
 else
-  echo "JUSTEP_HOME: $JUSTEP_HOME"
+  #echo "JUSTEP_HOME: $JUSTEP_HOME"
   export JUSTEP_HOME
 fi
 jarpath=/usr/local/db-init
