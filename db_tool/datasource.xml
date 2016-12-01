@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<datasource> 
+  <Resource name="x5" auth="" type="javax.sql.DataSource" driverClassName="##DB_DRIVER_CLASS_NAME##" url="##DB_URL##" username="##DB_USERNAME##" password="##DB_PASSWORD##" schema="##DB_SCHEMA##"></Resource> 
+</datasource>

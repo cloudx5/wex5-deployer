@@ -1,5 +1,10 @@
 #!/bin/bash
-## SQL初始化部分
+
+#### SQL初始化
+
+echo "数据库SQL部分初始化开始..."
+dbsqls=`expr \`date +%s%N\` / 1000000`
+
 SQL_PATH="$JUSTEP_HOME/sql"
 mkdir -p $SQL_PATH
 LOG_PATH="$SQL_PATH/sql_`date +%Y%m%d%H%M%S`.log"
@@ -51,14 +56,13 @@ echo "  获取mysql客户端..."
 curl -s -f $PRODUCT_URL/mysql/5.6/mysql -o mysql
 chmod a+x mysql
 
-echo "数据库SQL部分初始化开始..."
-dbsqls=`expr \`date +%s%N\` / 1000000`
 load_script $SQL_PATH
 dbsqle=`expr \`date +%s%N\` / 1000000`
 echo "数据库SQL部分初始化完毕. 耗时$[ dbsqle - dbsqls ]毫秒"
 
+#### migrate.jar执行
+
 echo "数据库migrate部分初始化开始..."
-dbjars=`expr \`date +%s%N\` / 1000000`
 
 if [ -z "$DB_DRIVER_CLASS_NAME" ]; then
   error '请设置DB_DRIVER_CLASS_NAME环境变量' 1
@@ -101,5 +105,21 @@ cd $jarpath
 java -jar migrate.jar 
 cd -
 dbjare=`expr \`date +%s%N\` / 1000000`
-echo "数据库migrate部分初始化完毕. 耗时$[ dbjare - dbjars ]毫秒"
+echo "数据库migrate部分初始化完毕. 耗时$[ dbjare - dbsqle ]毫秒"
 
+#### 生成datasource.xml
+
+echo "生成$JUSTEP_HOME/conf/datasource.xml开始..."
+
+xmlpath=/usr/local/db-init/datasource.xml
+content=`cat $xmlpath` 
+content=${content//##DB_DRIVER_CLASS_NAME##/$DB_DRIVER_CLASS_NAME}
+content=${content//##DB_USERNAME##/$DB_USERNAME}
+content=${content//##DB_PASSWORD##/$DB_PASSWORD}
+content=${content//##DB_URL##/$DB_URL}
+content=${content//##DB_SCHEMA##/$DB_SCHEMA}
+#echo $content
+echo $content > $JUSTEP_HOME/conf/datasource.xml
+
+xmlgen=`expr \`date +%s%N\` / 1000000`
+echo "datasource.xml生成完毕. 耗时$[ xmlgen - dbjare ]毫秒"
