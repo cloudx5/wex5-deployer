@@ -2,7 +2,7 @@
 
 #### SQL初始化
 
-echo "数据库SQL部分初始化开始..."
+echo "  数据库SQL部分初始化开始..."
 dbsqls=`expr \`date +%s%N\` / 1000000`
 
 SQL_PATH="$JUSTEP_HOME/sql"
@@ -58,44 +58,44 @@ chmod a+x mysql
 
 load_script $SQL_PATH
 dbsqle=`expr \`date +%s%N\` / 1000000`
-echo "数据库SQL部分初始化完毕. 耗时$[ dbsqle - dbsqls ]毫秒"
+echo "  数据库SQL部分初始化完毕. 耗时$[ dbsqle - dbsqls ]毫秒"
 
 #### migrate.jar执行
 
-echo "数据库migrate部分初始化开始..."
+echo "  数据库migrate部分初始化开始..."
 
 if [ -z "$DB_DRIVER_CLASS_NAME" ]; then
-  error '请设置DB_DRIVER_CLASS_NAME环境变量' 1
+  error '  请设置DB_DRIVER_CLASS_NAME环境变量' 1
 else
   #echo "DB_DRIVER_CLASS_NAME: $DB_DRIVER_CLASS_NAME"
   export DB_DRIVER_CLASS_NAME
 fi
 if [ -z "$DB_USERNAME" ]; then
-  error '请设置DB_USERNAME环境变量' 1
+  error '  请设置DB_USERNAME环境变量' 1
 else
   #echo "DB_USERNAME: $DB_USERNAME"
   export DB_USERNAME
 fi
 if [ -z "$DB_PASSWORD" ]; then
-  error '请设置DB_PASSWORD环境变量' 1
+  error '  请设置DB_PASSWORD环境变量' 1
 else
   #echo "DB_PASSWORD: $DB_PASSWORD"
   export DB_PASSWORD
 fi
 if [ -z "$DB_URL" ]; then
-  error '请设置DB_URL环境变量' 1
+  error '  请设置DB_URL环境变量' 1
 else
   #echo "DB_URL: $DB_URL"
   export DB_URL
 fi
 if [ -z "$DB_SCHEMA" ]; then
-  error '请设置DB_SCHEMA环境变量' 1
+  error '  请设置DB_SCHEMA环境变量' 1
 else
   #echo "DB_SCHEMA: $DB_SCHEMA"
   export DB_SCHEMA
 fi
 if [ -z "$JUSTEP_HOME" ]; then
-  error '请设置JUSTEP_HOME环境变量' 1
+  error '  请设置JUSTEP_HOME环境变量' 1
 else
   #echo "JUSTEP_HOME: $JUSTEP_HOME"
   export JUSTEP_HOME
@@ -105,11 +105,11 @@ cd $jarpath
 java -jar migrate.jar 
 cd -
 dbjare=`expr \`date +%s%N\` / 1000000`
-echo "数据库migrate部分初始化完毕. 耗时$[ dbjare - dbsqle ]毫秒"
+echo "  数据库migrate部分初始化完毕. 耗时$[ dbjare - dbsqle ]毫秒"
 
 #### 生成datasource.xml
 
-echo "生成$JUSTEP_HOME/conf/datasource.xml开始..."
+echo "  生成$JUSTEP_HOME/conf/datasource.xml开始..."
 
 xmlpath=/usr/local/db-init/datasource.xml
 content=`cat $xmlpath` 
@@ -123,4 +123,4 @@ content=${content//##DB_SCHEMA##/$DB_SCHEMA}
 echo $content > $JUSTEP_HOME/conf/datasource.xml
 
 xmlgen=`expr \`date +%s%N\` / 1000000`
-echo "datasource.xml生成完毕. 耗时$[ xmlgen - dbjare ]毫秒"
+echo "  datasource.xml生成完毕. 耗时$[ xmlgen - dbjare ]毫秒"
