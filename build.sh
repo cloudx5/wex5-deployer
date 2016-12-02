@@ -5,7 +5,7 @@ error_exit() {
     exit 1
 }
 REGISTRY=${REGISTRY:-"hub.cloudx5.com/"}
-TAG=${TAG:-"2.1"}
+TAG=${TAG:-"2"}
 IMAGE=${IMAGE:-"justep/wex5-deployer:${TAG}"}
 
 chmod a+x *.sh
