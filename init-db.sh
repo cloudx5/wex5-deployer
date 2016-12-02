@@ -126,3 +126,6 @@ echo $content > $JUSTEP_HOME/conf/datasource.xml
 
 xmlgen=`expr \`date +%s%N\` / 1000000`
 echo "  datasource.xml生成完毕. 耗时$[ xmlgen - dbjare ]毫秒"
+
+echo "  调用initpostgrest(schemaid: $POSTGREST_SCHEMAID)..."
+curl http://$APP_SRV_NAME:$APP_SRV_PORT/x5/UI2/system/deploy/common/initPostgrest.j?postgrest_schemaId=$POSTGREST_SCHEMAID &

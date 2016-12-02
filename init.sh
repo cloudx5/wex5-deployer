@@ -54,6 +54,10 @@ do
       DB_TYPE=${line#*=}
       #echo "$API_SECRET"
       ;;
+    "postgrest_schemaid")
+      POSTGREST_SCHEMAID=${line#*=}
+      #echo "$API_SECRET"
+      ;;  
     [a-z]*_srvinit)
       #SRV_INIT_ARR=(${SRV_INIT_ARR[@]} $kv)
       #echo $kv
