@@ -50,6 +50,10 @@ do
       DB_SCHEMA=${line#*=}
       #echo "$API_SECRET"
       ;;
+    "db_type")
+      DB_TYPE=${line#*=}
+      #echo "$API_SECRET"
+      ;;
     [a-z]*_srvinit)
       #SRV_INIT_ARR=(${SRV_INIT_ARR[@]} $kv)
       #echo $kv
