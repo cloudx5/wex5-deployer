@@ -1,10 +1,10 @@
 #!/bin/bash
 echo "  数据库类型: $DB_TYPE"
+dbsqls=`expr \`date +%s%N\` / 1000000`
 if [  "$DB_TYPE" = "mysql" ]; then
 #### SQL初始化
 
   echo "  MYSQL数据库初始化开始..."
-  dbsqls=`expr \`date +%s%N\` / 1000000`
   
   SQL_PATH="$JUSTEP_HOME/sql"
   mkdir -p $SQL_PATH
@@ -107,10 +107,11 @@ else
   java -jar migrate.jar 
   cd -
   dbjare=`expr \`date +%s%N\` / 1000000`
-  echo "  数据库migrate部分初始化完毕. 耗时$[ dbjare - dbsqle ]毫秒"
+  echo "  数据库migrate部分初始化完毕. 耗时$[ dbjare - dbsqls ]毫秒"
 fi
 #### 生成datasource.xml
 
+xmlgens=`expr \`date +%s%N\` / 1000000`
 echo "  生成$JUSTEP_HOME/conf/datasource.xml开始..."
 
 xmlpath=/usr/local/db-init/datasource.xml
@@ -125,7 +126,7 @@ content=${content//##DB_SCHEMA##/$DB_SCHEMA}
 echo $content > $JUSTEP_HOME/conf/datasource.xml
 
 xmlgen=`expr \`date +%s%N\` / 1000000`
-echo "  datasource.xml生成完毕. 耗时$[ xmlgen - dbjare ]毫秒"
+echo "  datasource.xml生成完毕. 耗时$[ xmlgen - xmlgens ]毫秒"
 
 echo "  调用initpostgrest(schemaid: $POSTGREST_SCHEMAID)..."
 curl http://$APP_SRV_NAME:$APP_SRV_PORT/x5/UI2/system/deploy/common/initPostgrest.j?postgrest_schemaId=$POSTGREST_SCHEMAID &
