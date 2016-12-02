@@ -123,10 +123,13 @@ DB_URL_ESCAPE=${DB_URL//&/&amp;}
 content=${content//##DB_URL##/$DB_URL_ESCAPE}
 content=${content//##DB_SCHEMA##/$DB_SCHEMA}
 #echo $content
+mkdir -p $JUSTEP_HOME/conf
+
 echo $content > $JUSTEP_HOME/conf/datasource.xml
 
 xmlgen=`expr \`date +%s%N\` / 1000000`
 echo "  datasource.xml生成完毕. 耗时$[ xmlgen - xmlgens ]毫秒"
 
 echo "  调用initpostgrest(schemaid: $POSTGREST_SCHEMAID)..."
-curl http://$APP_SRV_NAME:$APP_SRV_PORT/x5/UI2/system/deploy/common/initPostgrest.j?postgrest_schemaId=$POSTGREST_SCHEMAID &
+curl -sf -o /dev/null --url "http://$APP_SRV_NAME:$APP_SRV_PORT/x5/UI2/system/deploy/common/initPostgrest.j?postgrest_schemaid=$POSTGREST_SCHEMAID" &
+
