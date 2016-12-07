@@ -47,6 +47,7 @@ echo "更新资源完毕"
 cd $WEBAPPS_DIR
 
 echo "正在更新$X5_NAME运行时..."
+download_webapps $X5_URL/webapps
 curl -s -f $X5_URL/$UPDATE_WEBAPPS_SH -o $UPDATE_WEBAPPS_SH
 ERROR=$?
 if [ "$ERROR" -eq "0" ]; then
@@ -62,5 +63,4 @@ else
   fi
   echo "  无更新规则，跳过更新"
 fi
-download_webapps $X5_URL/webapps
 echo "更新$X5_NAME运行时完毕"
