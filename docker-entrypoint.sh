@@ -9,5 +9,5 @@ if [ -z "$POOL_TYPE" ]; then
 else
   echo "****FINISHED****"
   echo "启动池类型为$POOL_TYPE的监听"
-  java -Xms16m -Xmx64m -jar /usr/local/agent/agent-1.0.1.jar $POOL_TYPE
+  java -Xmx64m -Xms16m -Xmn8m -Xss1m -XX:ReservedCodeCacheSize=5m -XX:NewRatio=3 -jar /usr/local/agent/agent-1.0.1.jar $POOL_TYPE
 fi
