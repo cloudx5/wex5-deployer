@@ -3,11 +3,6 @@ start=`expr \`date +%s%N\` / 1000000`
 
 source `dirname $0`/common.sh
 echo "用户资源ID: $1"
-
-if [ -z "$DIST_URL" ]; then
-  error '请设置$DIST_URL环境变量 ' 1
-fi
-
 export DIST_URL=$DIST_URL/$1
 
 PROJECT_CONF_PATH=`dirname $0`/project.conf
@@ -62,14 +57,6 @@ do
     "postgrest_schemaid")
       POSTGREST_SCHEMAID=${line#*=}
       #echo "$API_SECRET"
-      ;; 
-    "kong_db_schemaid")
-      KONG_DB_SCHEMAID=${line#*=}
-      #echo "$API_SECRET"
-      ;; 
-    "kong_db_url")
-      KONG_DB_URL=${line#*=}
-      #echo "$API_SECRET"
       ;;  
     [a-z]*_srvinit)
       #SRV_INIT_ARR=(${SRV_INIT_ARR[@]} $kv)
@@ -82,32 +69,11 @@ do
   esac
 done < $PROJECT_CONF_PATH
 
-cf=/kong/dbcon.conf
-if [ -z "$KONG_DB_URL" ]; then
-  error '$KONG_DB_URL值不存在或为空! ' 1
-else
-  echo "Kong db url: $KONG_DB_URL"
-  strs=(${KONG_DB_URL//\?/ })
-  prefix=${strs[0]}
-  suffix=${strs[1]}
-  dbstr=${prefix##jdbc*//}
-  dbs=(${dbstr//\// })
-  dbn="database=${dbs[1]}"
-  dblstr=${dbs[0]}
-  dbl=(${dblstr//:/ })
-  dbh="host=${dbl[0]}"
-  dbp="port=${dbl[1]}"
-  vs=(${suffix//&/ })
-  echo $dbn > $cf
-  echo ${vs[0]} >> $cf
-  echo ${vs[1]} >> $cf
-  echo ${vs[2]} >> $cf
-  echo $dbh >> $cf
-  echo $dbp >> $cf
-  echo "schemaid=$KONG_DB_SCHEMAID" >> $cf
+
+
+if [ -z "$DIST_URL" ]; then
+  error '请设置$DIST_URL环境变量 ' 1
 fi
-echo "dbcon.conf内容："
-cat $cf
 
 prepare=`expr \`date +%s%N\` / 1000000`
 echo "环境参数获取耗时$[ prepare - start ]毫秒"

@@ -20,5 +20,4 @@ COPY clean.sh /usr/local/bin/
 COPY agent-1.0.1.jar /usr/local/agent/
 COPY db_tool /usr/local/db-init
 RUN ln -s /usr/local/bin/docker-entrypoint.sh /entrypoint.sh # backwards compat
-RUN mkdir -p /kong touch && /kong/dbcon.conf
 CMD ["docker-entrypoint.sh"]
