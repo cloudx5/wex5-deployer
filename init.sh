@@ -3,11 +3,6 @@ start=`expr \`date +%s%N\` / 1000000`
 
 source `dirname $0`/common.sh
 echo "用户资源ID: $1"
-
-if [ -z "$DIST_URL" ]; then
-  error '请设置$DIST_URL环境变量 ' 1
-fi
-
 export DIST_URL=$DIST_URL/$1
 
 PROJECT_CONF_PATH=`dirname $0`/project.conf
@@ -25,7 +20,7 @@ do
   case ${kv[0]} in
     "api_key")
       API_KEY=${line#*=}
-      #echo "$API_KEY"
+      echo "$API_KEY"
       ;;
     "api_secret")
       API_SECRET=${line#*=}
@@ -35,40 +30,32 @@ do
       INDEX_URL=${line#*=}
       #echo "$API_SECRET"
       ;;
-    "app_db_username")
+    "db_username")
       DB_USERNAME=${line#*=}
       #echo "$API_SECRET"
       ;;
-    "app_db_password")
+    "db_password")
       DB_PASSWORD=${line#*=}
       #echo "$API_SECRET"
       ;;
-    "app_db_driver_class")
+    "db_driver_class")
       DB_DRIVER_CLASS_NAME=${line#*=}
       #echo "$API_SECRET"
       ;;
-    "app_db_url")
+    "db_url")
       DB_URL=${line#*=}
       #echo "$API_SECRET"
       ;;
-    "app_db_schema")
+    "db_schema")
       DB_SCHEMA=${line#*=}
       #echo "$API_SECRET"
       ;;
-    "app_db_type")
+    "db_type")
       DB_TYPE=${line#*=}
       #echo "$API_SECRET"
       ;;
     "postgrest_schemaid")
       POSTGREST_SCHEMAID=${line#*=}
-      #echo "$API_SECRET"
-      ;; 
-    "kong_db_schemaid")
-      KONG_DB_SCHEMAID=${line#*=}
-      #echo "$API_SECRET"
-      ;; 
-    "kong_db_url")
-      KONG_DB_URL=${line#*=}
       #echo "$API_SECRET"
       ;;  
     [a-z]*_srvinit)
@@ -82,37 +69,14 @@ do
   esac
 done < $PROJECT_CONF_PATH
 
-cf=/usr/local/db-init/kong-dbcon.conf
-if [ -z "$KONG_DB_URL" ]; then
-  error '$KONG_DB_URL值不存在或为空! ' 1
-else
-  echo "Kong db url: $KONG_DB_URL"
-  strs=(${KONG_DB_URL//\?/ })
-  prefix=${strs[0]}
-  suffix=${strs[1]}
-  dbstr=${prefix##jdbc*//}
-  dbs=(${dbstr//\// })
-  dbn="database=${dbs[1]}"
-  dblstr=${dbs[0]}
-  dbl=(${dblstr//:/ })
-  dbh="host=${dbl[0]}"
-  dbp="port=${dbl[1]}"
-  vs=(${suffix//&/ })
-  echo $dbn > $cf
-  echo ${vs[0]} >> $cf
-  echo ${vs[1]} >> $cf
-  echo ${vs[2]} >> $cf
-  echo $dbh >> $cf
-  echo $dbp >> $cf
-  echo "schemaid=$KONG_DB_SCHEMAID" >> $cf
+
+
+if [ -z "$DIST_URL" ]; then
+  error '请设置$DIST_URL环境变量 ' 1
 fi
-#echo "dbcon.conf内容："
-echo "$cf 内容已生成."
-#cat $cf
 
 prepare=`expr \`date +%s%N\` / 1000000`
-echo "环境参数获取和构造耗时$[ prepare - start ]毫秒"
-
+echo "环境参数获取耗时$[ prepare - start ]毫秒"
 
 echo "正在初始化网关..."
 source `dirname $0`/init-gateway.sh
@@ -165,7 +129,7 @@ download_webapps $DIST_URL/webapps
 webapps=`expr \`date +%s%N\` / 1000000`
 echo "自定义webapps更新完毕. 耗时$[ webapps - usrsrc ]毫秒."
 
-# 数据库初始化
+# 数据库初始化，由于数据库容器启动慢，放到最后执行
 echo "正在初始化数据库..."
 if [ "$INIT_DB"x = "false"x ]; then
   echo '$INIT_DB=false，忽略数据库初始化'
@@ -177,4 +141,3 @@ echo "数据库初始化完毕. 耗时$[ dbinit - webapps ]毫秒."
 
 end=`expr \`date +%s%N\` / 1000000`
 echo "初始化总耗时: $[ end - start ]毫秒."
-

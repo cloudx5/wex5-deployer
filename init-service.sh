@@ -25,7 +25,7 @@ for srv in $srvinit;do
       echo "  初始化公共服务： ${sn[0]}..."
       #echo "$BASE_DOMAIN"
       sstart=`expr \`date +%s%N\` / 1000000`
-      curl -sS -w "  %{http_code}\n" -H "Host: $BASE_DOMAIN" -X POST --url http://gateway/${sn[0]}$value -H "apiKey: $API_KEY" -H "apiSecret: $API_SECRET"
+      curl -sS -w "%{http_code}\n" -H "Host: $BASE_DOMAIN" -X POST --url http://gateway/${sn[0]}$value -H "apiKey: $API_KEY" -H "apiSecret: $API_SECRET"
       send=`expr \`date +%s%N\` / 1000000`
       echo "  初始化公共服务： ${sn[0]}结束. 耗时$[ send - sstart ]毫秒."
       ;;
