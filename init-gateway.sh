@@ -109,28 +109,28 @@ curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/po
 curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=postgrest" --data "upstream_url=http://$APP_SRV_NAME:3000" --data "request_path=/postgrest" --data "preserve_host=true" --data "strip_request_path=true"
 
 #x5
-echo
-echo -n "  /x5 清理并接入 ... "
-curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/x5
-curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=x5" --data "upstream_url=http://$APP_SRV_NAME:$APP_SRV_PORT" --data "request_path=/x5" --data "preserve_host=true"
+#echo
+#echo -n "  /x5 清理并接入 ... "
+#curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/x5
+#curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=x5" --data "upstream_url=http://$APP_SRV_NAME:$APP_SRV_PORT" --data "request_path=/x5" --data "preserve_host=true"
 
 #ide
-echo
-echo -n "  /ide 清理并接入 ... "
-curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/ide
-curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=ide" --data "upstream_url=http://$APP_SRV_NAME:$APP_SRV_PORT" --data "request_path=/ide" --data "preserve_host=true"
+#echo
+#echo -n "  /ide 清理并接入 ... "
+#curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/ide
+#curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=ide" --data "upstream_url=http://$APP_SRV_NAME:$APP_SRV_PORT" --data "request_path=/ide" --data "preserve_host=true"
 
 #baas
-echo
-echo "  baas 清理并接入 ... "
-curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/baas
-curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=baas" --data "upstream_url=http://$APP_SRV_NAME:$APP_SRV_PORT" --data "request_path=/baas" --data "preserve_host=true"
+#echo
+#echo "  baas 清理并接入 ... "
+#curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/baas
+#curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=baas" --data "upstream_url=http://$APP_SRV_NAME:$APP_SRV_PORT" --data "request_path=/baas" --data "preserve_host=true"
 
 #/ static resource
 echo
-echo "  静态资源 清理并接入 ... "
-curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/static
-curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=static" --data "upstream_url=http://$APP_SRV_NAME:$APP_SRV_PORT" --data "request_path=/" --data "preserve_host=true"
+echo "  应用资源 清理并接入 ... "
+curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/app
+curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=app" --data "upstream_url=http://$APP_SRV_NAME:$APP_SRV_PORT" --data "request_path=/" --data "preserve_host=true"
 
 execute=`expr \`date +%s%N\` / 1000000`
 echo

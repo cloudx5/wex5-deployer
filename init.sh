@@ -78,10 +78,20 @@ fi
 prepare=`expr \`date +%s%N\` / 1000000`
 echo "环境参数获取耗时$[ prepare - start ]毫秒"
 
+# 数据库初始化，由于数据库容器启动慢，放到最后执行
+echo "正在初始化数据库..."
+if [ "$INIT_DB"x = "false"x ]; then
+  echo '$INIT_DB=false，忽略数据库初始化'
+else
+  source `dirname $0`/init-db.sh  
+fi
+dbinit=`expr \`date +%s%N\` / 1000000`
+echo "数据库初始化完毕. 耗时$[ dbinit - prepare ]毫秒."
+
 echo "正在初始化网关..."
 source `dirname $0`/init-gateway.sh
 gateway=`expr \`date +%s%N\` / 1000000`
-echo "初始化网关完毕. 总耗时$[ gateway - prepare ]毫秒"
+echo "初始化网关完毕. 总耗时$[ gateway - dbinit ]毫秒"
 
 echo "正在初始化公共服务..."
 source `dirname $0`/init-service.sh
@@ -128,16 +138,6 @@ echo "正在更新自定义webapps..."
 download_webapps $DIST_URL/webapps
 webapps=`expr \`date +%s%N\` / 1000000`
 echo "自定义webapps更新完毕. 耗时$[ webapps - usrsrc ]毫秒."
-
-# 数据库初始化，由于数据库容器启动慢，放到最后执行
-echo "正在初始化数据库..."
-if [ "$INIT_DB"x = "false"x ]; then
-  echo '$INIT_DB=false，忽略数据库初始化'
-else
-  source `dirname $0`/init-db.sh  
-fi
-dbinit=`expr \`date +%s%N\` / 1000000`
-echo "数据库初始化完毕. 耗时$[ dbinit - webapps ]毫秒."
 
 end=`expr \`date +%s%N\` / 1000000`
 echo "初始化总耗时: $[ end - start ]毫秒."
