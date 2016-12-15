@@ -58,49 +58,54 @@ wgstart=`expr \`date +%s%N\` / 1000000`
 echo "  等待Gateway耗时$[ wgstart - gstart ]毫秒. "
 
 outputf='  %{http_code}, 耗时: %{time_total}s. '
-#uaa
-echo -n "  /uaa 清理并接入 ... "
-curl -sf -o /dev/null  -w "$outputf"  -X DELETE --url http://gateway:8001/apis/uaa
-curl -sf -o /dev/null -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=uaa" --data "upstream_url=http://uaa.$CMN_STACK_NAME:8080" --data "request_path=/uaa" --data "preserve_host=true"
-#curl -sf -o /dev/null  -w "%{http_code}
 
-#login
-echo
-echo -n "  /login 清理并接入 ... "
-curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/login
-curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=login" --data "upstream_url=http://uaa.$CMN_STACK_NAME:8080/uaa/login" --data "request_path=/login" --data "preserve_host=true"
-curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/login/plugins/ --data "name=authentication" --data "config.app_key=$API_KEY" --data "config.app_secret=$API_SECRET"
-
-#logout
-echo
-echo -n "  /logout 清理并接入 ... "
-curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/logout
-curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=logout" --data "upstream_url=http://uaa.$CMN_STACK_NAME:8080/uaa/logout" --data "request_path=/logout" --data "preserve_host=true"
-curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/logout/plugins/ --data "name=authentication" --data "config.app_key=$API_KEY" --data "config.app_secret=$API_SECRET"
-
-#db-admin
-echo
-echo -n "  /db-admin 清理并接入 ... "
-curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/db-admin
-curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=db-admin" --data "upstream_url=http://$APP_SRV_NAME" --data "request_path=/db-admin" --data "preserve_host=true"
-
-#storage
-echo
-echo -n "  /storage 清理并接入 ... "
-curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/storage
-curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=storage" --data "upstream_url=http://storage.$CMN_STACK_NAME:8770" --data "request_path=/storage" --data "preserve_host=true"
-
-#appkey
-echo
-echo -n "  /appkey 清理并接入 ... "
-curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/appkey
-curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=appkey" --data "upstream_url=http://appkey.$CMN_STACK_NAME:8781" --data "request_path=/appkey" --data "preserve_host=true"
-
-#sms
-echo
-echo "  sms 清理并接入 ... "
-curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/sms
-curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=sms" --data "upstream_url=http://sms.$CMN_STACK_NAME:8782" --data "request_path=/sms" --data "preserve_host=true"
+if [[ -z "$NO_CMNSRV" || "$NO_CMNSRV" = "false" ]]; then
+  #uaa
+  echo -n "  /uaa 清理并接入 ... "
+  curl -sf -o /dev/null  -w "$outputf"  -X DELETE --url http://gateway:8001/apis/uaa
+  curl -sf -o /dev/null -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=uaa" --data "upstream_url=http://uaa.$CMN_STACK_NAME:8771" --data "request_path=/uaa" --data "preserve_host=true"
+  #curl -sf -o /dev/null  -w "%{http_code}
+  
+  #login
+  echo
+  echo -n "  /login 清理并接入 ... "
+  curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/login
+  curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=login" --data "upstream_url=http://uaa.$CMN_STACK_NAME:8771/uaa/login" --data "request_path=/login" --data "preserve_host=true"
+  curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/login/plugins/ --data "name=authentication" --data "config.app_key=$API_KEY" --data "config.app_secret=$API_SECRET"
+  
+  #logout
+  echo
+  echo -n "  /logout 清理并接入 ... "
+  curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/logout
+  curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=logout" --data "upstream_url=http://uaa.$CMN_STACK_NAME:8771/uaa/logout" --data "request_path=/logout" --data "preserve_host=true"
+  curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/logout/plugins/ --data "name=authentication" --data "config.app_key=$API_KEY" --data "config.app_secret=$API_SECRET"
+  
+  #db-admin
+  echo
+  echo -n "  /db-admin 清理并接入 ... "
+  curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/db-admin
+  curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=db-admin" --data "upstream_url=http://$APP_SRV_NAME" --data "request_path=/db-admin" --data "preserve_host=true"
+  
+  #storage
+  echo
+  echo -n "  /storage 清理并接入 ... "
+  curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/storage
+  curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=storage" --data "upstream_url=http://storage.$CMN_STACK_NAME:8770" --data "request_path=/storage" --data "preserve_host=true"
+  
+  #appkey
+  echo
+  echo -n "  /appkey 清理并接入 ... "
+  curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/appkey
+  curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=appkey" --data "upstream_url=http://appkey.$CMN_STACK_NAME:8781" --data "request_path=/appkey" --data "preserve_host=true"
+  
+  #sms
+  echo
+  echo -n "  /sms 清理并接入 ... "
+  curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/sms
+  curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=sms" --data "upstream_url=http://sms.$CMN_STACK_NAME:8782" --data "request_path=/sms" --data "preserve_host=true"
+else
+  echo -n "  no_cmnsrv存在， 跳过公共服务接入."
+fi  
 
 #postgrest
 echo
@@ -128,7 +133,7 @@ curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --d
 
 #/ static resource
 echo
-echo "  应用资源 清理并接入 ... "
+echo -n "  应用 清理并接入 ... "
 curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/app
 curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=app" --data "upstream_url=http://$APP_SRV_NAME:$APP_SRV_PORT" --data "request_path=/" --data "preserve_host=true"
 

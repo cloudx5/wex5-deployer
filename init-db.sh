@@ -1,24 +1,10 @@
 #!/bin/bash
 
 dbstart=`expr \`date +%s%N\` / 1000000`
-
-#### 启动pgrest
-echo "  开始调用initpostgrest(schemaid: $POSTGREST_SCHEMAID)..."
-for i in {9..0}; do
-  ret=`curl -sf -o /dev/null -w "%{http_code}" --url "http://$APP_SRV_NAME:$APP_SRV_PORT/x5/UI2/system/deploy/common/initPostgrest.j?postgrest_schemaid=$POSTGREST_SCHEMAID"`
-  echo "  返回: $ret"
-  if [[ "x$ret" =~ x20* || "x$ret" =~ x50* ]]; then
-    break
-  fi
-  echo '  initpostgrest失败，3秒后重试...'
-  sleep 3
-done
-inipgrst=`expr \`date +%s%N\` / 1000000`
-echo "  调用initpostgrest完毕. 耗时$[ inipgrst - dbstart ]毫秒"
+echo "  数据库类型: $DB_TYPE"
 
 #### SQL初始化
-echo "  数据库类型: $DB_TYPE"
-if [  "$DB_TYPE" = "mysql" ]; then
+if [[ -z "$DB_TYPE" ||  "$DB_TYPE" = "mysql" ]]; then
 
   echo "  MYSQL数据库初始化开始..."
   
@@ -75,11 +61,24 @@ if [  "$DB_TYPE" = "mysql" ]; then
   
   load_script $SQL_PATH
   dbmig=`expr \`date +%s%N\` / 1000000`
-  echo "  数据库SQL部分初始化完毕. 耗时$[ dbmig - inipgrst ]毫秒"
+  echo "  数据库SQL部分初始化完毕. 耗时$[ dbstart - inipgrst ]毫秒"
 
-else  
+elif [[ "$DB_TYPE" = "pgsql" ]]; then
+#### 启动pgrest
+  echo "  开始调用initpostgrest(schemaid: $POSTGREST_SCHEMAID)..."
+  for i in {9..0}; do
+    ret=`curl -sf -o /dev/null -w "%{http_code}" --url "http://$APP_SRV_NAME:$APP_SRV_PORT/x5/UI2/system/deploy/common/initPostgrest.j?postgrest_schemaid=$POSTGREST_SCHEMAID"`
+    echo "  返回: $ret"
+    if [[ "x$ret" =~ x20* || "x$ret" =~ x50* ]]; then
+      break
+    fi
+    echo '  initpostgrest失败，3秒后重试...'
+    sleep 3
+  done
+  inipgrst=`expr \`date +%s%N\` / 1000000`
+  echo "  调用initpostgrest完毕. 耗时$[ inipgrst - dbstart ]毫秒"
+
 #### migrate.jar执行
-
   echo "  数据库migrate部分初始化开始..."
   
   if [ -z "$DB_DRIVER_CLASS_NAME" ]; then
@@ -123,25 +122,30 @@ else
   java -jar migrate.jar 
   cd -
   dbmig=`expr \`date +%s%N\` / 1000000`
-  echo "  数据库migrate部分初始化完毕. 耗时$[ dbmig - initpgrst ]毫秒"
+  echo "  数据库migrate部分初始化完毕. 耗时$[ dbmig - inipgrst ]毫秒"
+else
+  echo "  未知的数据库类型! 退出数据库初始化."
+  UNKNOWN_TYPE="true"
 fi
-#### 生成datasource.xml
 
-echo "  生成$JUSTEP_HOME/conf/datasource.xml开始..."
-
-xmlpath=/usr/local/db-init/datasource.xml
-content=`cat $xmlpath` 
-content=${content//##DB_DRIVER_CLASS_NAME##/$DB_DRIVER_CLASS_NAME}
-content=${content//##DB_USERNAME##/$DB_USERNAME}
-content=${content//##DB_PASSWORD##/$DB_PASSWORD}
-DB_URL_ESCAPE=${DB_URL//&/&amp;}
-content=${content//##DB_URL##/$DB_URL_ESCAPE}
-content=${content//##DB_SCHEMA##/$DB_SCHEMA}
-#echo $content
-mkdir -p $JUSTEP_HOME/conf
-
-echo $content > $JUSTEP_HOME/conf/datasource.xml
-
-xmlgen=`expr \`date +%s%N\` / 1000000`
-echo "  datasource.xml生成完毕. 耗时$[ xmlgen - dbmig ]毫秒"
-
+if [[ -z "$UNKNOWN_TYPE" ]]; then
+  #### 生成datasource.xml
+  
+  echo "  生成$JUSTEP_HOME/conf/datasource.xml开始..."
+  
+  xmlpath=/usr/local/db-init/datasource.xml
+  content=`cat $xmlpath` 
+  content=${content//##DB_DRIVER_CLASS_NAME##/$DB_DRIVER_CLASS_NAME}
+  content=${content//##DB_USERNAME##/$DB_USERNAME}
+  content=${content//##DB_PASSWORD##/$DB_PASSWORD}
+  DB_URL_ESCAPE=${DB_URL//&/&amp;}
+  content=${content//##DB_URL##/$DB_URL_ESCAPE}
+  content=${content//##DB_SCHEMA##/$DB_SCHEMA}
+  #echo $content
+  mkdir -p $JUSTEP_HOME/conf
+  
+  echo $content > $JUSTEP_HOME/conf/datasource.xml
+  
+  xmlgen=`expr \`date +%s%N\` / 1000000`
+  echo "  datasource.xml生成完毕. 耗时$[ xmlgen - dbmig ]毫秒"
+fi
