@@ -17,11 +17,11 @@ if [ -z "$API_SECRET" ]; then
   echo "  API_SECRET环境变量未设置， 使用默认值: $API_S"
 fi
 
-if [ -z "$BASE_DOMAIN" ]; then
+#if [ -z "$BASE_DOMAIN" ]; then
   #error '请设置BASE_DOMAIN环境变量' 1
-  BASE_DOMAIN="xpaas.net"
-  echo "  BASE_DOMAIN环境变量未设置， 使用默认值: $BASE_DOMAIN"
-fi
+#  BASE_DOMAIN="xpaas.net"
+#  echo "  BASE_DOMAIN环境变量未设置， 使用默认值: $BASE_DOMAIN"
+#fi
 
 if [ -z "$APP_SRV_NAME" ]; then
   APP_SRV_NAME="wex5"

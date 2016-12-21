@@ -5,7 +5,7 @@ source `dirname $0`/common.sh
 echo "用户资源ID: $1"
 export DIST_URL=$DIST_URL/$1
 
-PROJECT_CONF_PATH=`dirname $0`/project.conf
+PROJECT_CONF_PATH=$JUSTEP_HOME/project.conf
 
 rtcode=`curl -w "%{http_code}" -s -f $DIST_URL/home/project.conf -o $PROJECT_CONF_PATH`
 if [[ "x$rtcode" = "x200"  ]]; then

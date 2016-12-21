@@ -32,6 +32,28 @@ download_tar(){
   fi
 }
 
+download_ln_tar(){
+  # $1: url $2: filename $3: 是否忽略不存在的资源 
+  rm -rf $2.tar.gz
+  echo "  正在更新 $2..."
+  curl -s -f $1/$2.tar.gz -o $2.tar.gz
+  ERROR=$?
+  if [ "$ERROR" -eq "0" ]; then
+    src_dir=`dirname $0`/source
+    run_dir=`dirname $0`/model/UI2
+    mkdir -p $2
+    tar -xf $2.tar.gz -C $src_dir
+    find $src_dir -mindepth 1 -maxdepth 1 -type d | xargs ln -t $run_dir -fs
+    echo "  $2 更新完毕"
+  else
+    if [ "$3"x = "true"x ]; then
+      echo "  $2 不存在，忽略更新"
+    else
+      error "  [$ERROR]更新 $2 失败" 1
+    fi
+  fi
+}
+
 download_webapps(){
   rm -rf $WEBAPPS_DIR/webapps.txt
   curl -s -f $1/webapps.txt -o $WEBAPPS_DIR/webapps.txt
