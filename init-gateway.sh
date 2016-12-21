@@ -61,21 +61,21 @@ outputf='  %{http_code}, 耗时: %{time_total}s. '
 #uaa
 echo -n "  /uaa 清理并接入 ... "
 curl -sf -o /dev/null  -w "$outputf"  -X DELETE --url http://gateway:8001/apis/uaa
-curl -sf -o /dev/null -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=uaa" --data "upstream_url=http://uaa.$CMN_STACK_NAME:8080" --data "request_path=/uaa" --data "preserve_host=true"
+curl -sf -o /dev/null -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=uaa" --data "upstream_url=http://uaa.$CMN_STACK_NAME:8771" --data "request_path=/uaa" --data "preserve_host=true"
 #curl -sf -o /dev/null  -w "%{http_code}
 
 #login
 echo
 echo -n "  /login 清理并接入 ... "
 curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/login
-curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=login" --data "upstream_url=http://uaa.$CMN_STACK_NAME:8080/uaa/login" --data "request_path=/login" --data "preserve_host=true"
+curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=login" --data "upstream_url=http://uaa.$CMN_STACK_NAME:8771/uaa/login" --data "request_path=/login" --data "preserve_host=true"
 curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/login/plugins/ --data "name=authentication" --data "config.app_key=$API_KEY" --data "config.app_secret=$API_SECRET"
 
 #logout
 echo
 echo -n "  /logout 清理并接入 ... "
 curl -sf -o /dev/null  -w "$outputf" -X DELETE --url http://gateway:8001/apis/logout
-curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=logout" --data "upstream_url=http://uaa.$CMN_STACK_NAME:8080/uaa/logout" --data "request_path=/logout" --data "preserve_host=true"
+curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/ --data "name=logout" --data "upstream_url=http://uaa.$CMN_STACK_NAME:8771/uaa/logout" --data "request_path=/logout" --data "preserve_host=true"
 curl -sf -o /dev/null  -w "$outputf" -X POST --url http://gateway:8001/apis/logout/plugins/ --data "name=authentication" --data "config.app_key=$API_KEY" --data "config.app_secret=$API_SECRET"
 
 #db-admin
