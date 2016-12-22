@@ -39,11 +39,17 @@ download_ln_tar(){
   curl -s -f $1/$2.tar.gz -o $2.tar.gz
   ERROR=$?
   if [ "$ERROR" -eq "0" ]; then
-    src_dir=`dirname $0`/source
-    run_dir=`dirname $0`/model/UI2
-    mkdir -p $2
+    src_dir=$JUSTEP_HOME/source
+    mkdir -p $src_dir
     tar -xf $2.tar.gz -C $src_dir
-    find $src_dir -mindepth 1 -maxdepth 1 -type d | xargs ln -t $run_dir -fs
+    run_dir=$JUSTEP_HOME/model
+    for sub_name in `find $src_dir -maxdepth 1 -mindepth 1 -type d -printf "%f\n"` ; do
+      mkdir -p $run_dir/$sub_name
+      $retc=`find $src_dir/$sub_name -mindepth 1 -maxdepth 1`
+      if [ ! -z "$retc" ]; then
+        find $src_dir/$sub_name -mindepth 1 -maxdepth 1 | xargs ln -t $run_dir/$sub_name -fs
+      fi
+    done
     echo "  $2 更新完毕"
   else
     if [ "$3"x = "true"x ]; then
