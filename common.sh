@@ -45,7 +45,7 @@ download_ln_tar(){
     run_dir=$JUSTEP_HOME/model
     for sub_name in `find $src_dir -maxdepth 1 -mindepth 1 -type d -printf "%f\n"` ; do
       mkdir -p $run_dir/$sub_name
-      $retc=`find $src_dir/$sub_name -mindepth 1 -maxdepth 1`
+      retc=`find $src_dir/$sub_name -mindepth 1 -maxdepth 1`
       if [ ! -z "$retc" ]; then
         find $src_dir/$sub_name -mindepth 1 -maxdepth 1 | xargs ln -t $run_dir/$sub_name -fs
       fi
