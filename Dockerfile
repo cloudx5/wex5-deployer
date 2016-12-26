@@ -1,11 +1,13 @@
 FROM hub.cloudx5.com/java:8-jre
 
+RUN wget http://mirrors.163.com/.help/sources.list.jessie -O /etc/apt/sources.list
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		zip \
 		unzip \
 		ca-certificates \
 		curl \
 		wget \
+                vim \
 	&& rm -rf /var/lib/apt/lists/*
 
 COPY docker-entrypoint.sh /usr/local/bin/
